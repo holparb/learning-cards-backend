@@ -5,6 +5,16 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+//Required for https
+/*
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+*/
+
 var indexRouter = require('./routes/index');
 var cardsRouter = require('./routes/cards');
 
@@ -24,7 +34,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// make the databse available for every request
+// make the database available for every request
 app.use(function(req,res,next){
     req.db = db;
     next();
@@ -48,5 +58,14 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+//Required for https
+/*
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+
+httpServer.listen(3001);
+httpsServer.listen(3000);
+*/
 
 module.exports = app;
