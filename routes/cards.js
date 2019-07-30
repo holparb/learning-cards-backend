@@ -21,15 +21,17 @@ router.post("/add", (req, res) => {
     // get db and the collection
     var db = req.db;
     var collection = db.get("cards");
-
-    if(req.body.answer.length > 0) {
-        collection.insert(req.body, (error, addedData) => {
+    console.log("Original body", req.body);
+    var data = req.body;
+    if(data.hasOwnProperty("answer") && data.answer.length > 0) {
+        collection.insert((data), (error, addedData) => {
             // send OK response if data is successfully written, otherwise send the error message 
-            res.send((error === null) ? {isSuccessful: true, id: addedData._id } : {isSuccessful: false, error: error});
+            res.json((error === null) ? {isSuccessful: true, id: addedData._id } : {isSuccessful: false, error: error});
         });
     }
     else {
-        res.send({isSuccessful: false, error: "INVALID_ANSWER_LENGTH"});
+        res.json({isSuccessful: false, error: "INVALID_ANSWER_LENGTH"});
+        console.log("Invalid answer");
     }
 
     
@@ -43,7 +45,7 @@ router.delete("/delete/:id", (req, res) => {
     // remove the data specified by the id url parameter from the collection
     collection.remove({"_id" : req.params.id}, (error) => {
         // send OK response if data removal was successfull, otherwise send the error message 
-        res.send((error === null) ? {isSuccessful: true} : {isSuccessful: false, error: error});
+        res.json((error === null) ? {isSuccessful: true} : {isSuccessful: false, error: error});
     });
 });
 
@@ -52,10 +54,11 @@ router.patch("/update/:id", (req, res) => {
     // get db and the collection
     var db = req.db;
     var collection = db.get("cards");
+    console.log("Original body", req.body)
     // update the data specified by the id url parameter in the collection with new data from the request body
     collection.update({"_id" : req.params.id}, {$set: req.body}, (error) => {
         // send OK response if data removal was successfull, otherwise send the error message
-        res.send((error === null) ? {isSuccessful: true} : {isSuccessful: false, error: error});
+        res.json((error === null) ? {isSuccessful: true} : {isSuccessful: false, error: error});
     });
 });
 
