@@ -10,7 +10,7 @@ router.get("/list", function(req, res) {
     collection.find({},{},function(error, docs){
         console.log(docs);
         if(error !== null) {
-            res.send({ error: error });
+            res.json({isSuccessful: false, error: error});
         }
         res.json(docs);
     });
